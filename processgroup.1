@@ -1,0 +1,47 @@
+.TH processgroup 1 "2025-11-23" "processgroup manual"
+.SH NAME
+processgroup \- manage a simple group of process IDs (PIDs)
+.SH SYNOPSIS
+.B processgroup
+[\-a pid] [\-l] [\-k] [\-s sig] [\-r] [\-c] [\-h]
+.SH DESCRIPTION
+processgroup stores a list of PIDs in the file /tmp/processgroup.pids and provides
+simple group operations: add, list, send signals, kill, show resource fields, and cleanup.
+.SH OPTIONS
+.TP
+.B \-a pid
+Add the numeric PID to the process group. The PID is verified before adding.
+.TP
+.B \-l
+List all PIDs currently in the group.
+.TP
+.B \-k
+Send SIGKILL to all PIDs in the group.
+.TP
+.B \-s sig
+Send the numeric signal 'sig' to all PIDs in the group (e.g., 9, 15, 19).
+.TP
+.B \-r
+Show selected resource information for each PID (reads /proc/\%d/status).
+.TP
+.B \-c
+Cleanup dead PIDs from the stored list (remove PIDs that no longer exist).
+.TP
+.B \-h
+Show help/usage information.
+.SH EXIT STATUS
+The command returns 0 on success, non-zero on error.
+.SH FILES
+.TP
+.B /tmp/processgroup.pids
+Primary storage for the group PID list.
+.TP
+.B /tmp/processgroup.pids.tmp
+Temporary file used for atomic writes.
+.SH ERRORS
+The program prints clear messages to STDERR on invalid input, file access errors,
+permission errors, and when a PID cannot be signalled.
+.SH SEE ALSO
+kill(1), ps(1).
+.SH AUTHOR
+Course project for CSC 332.
