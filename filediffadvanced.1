@@ -1,0 +1,42 @@
+.TH FILEDIFFADVANCED 1
+
+.SH NAME
+filediffadvanced \- compare two files using text or binary mode
+
+.SH SYNOPSIS
+filediffadvanced <mode> <file1> <file2>
+
+Modes:
+  text     Line-by-line text comparison
+  binary   Byte-by-byte binary comparison
+
+.SH DESCRIPTION
+filediffadvanced is a simple file comparison tool implemented using
+POSIX system calls such as open(), read(), lseek(), and stat().
+It supports two comparison modes:
+
+  • text   Compares two files line-by-line and prints the line numbers
+           that are different.
+
+  • binary Compares two files byte-by-byte and prints the number of
+           differing bytes.
+
+The program also measures execution time using gettimeofday().
+
+.SH EXAMPLES
+Compare two text files:
+  filediffadvanced text a.txt b.txt
+
+Compare two binary files:
+  filediffadvanced binary bin1 bin2
+
+.SH ERRORS
+The program reports errors for:
+  • Missing arguments
+  • File open failures
+  • stat() failures
+  • fdopen() conversion errors
+  • read() errors during binary diff
+
+.SH NOTES
+Requires a POSIX environment (macOS, Linux, or Windows WSL).
