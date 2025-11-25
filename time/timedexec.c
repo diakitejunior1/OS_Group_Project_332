@@ -211,10 +211,10 @@ int main(int argc, char *argv[]) {
         //kernel force
         if(max_cpu > 0){
           struct rlimit rl;
-          rl.rlim_cur = max_cpu;
+          rl.rlim_cur = max_cpu; //override, new limit
           rl.rlim_max = max_cpu;
          
-          if(setrlimit(RLIMIT_CPU, &rl) == -1){//returns 0 on success
+          if(setrlimit(RLIMIT_CPU, &rl) == -1){//returns 0 on success. oinforms
             printf("Error in child. Setting cpu limit failed");
             }
             else{
@@ -277,7 +277,7 @@ int main(int argc, char *argv[]) {
             in_progress = 0;
         }
 
-        // --- Limit Checks ---
+
         if (stop) {
             // crtl+z
             // pause
@@ -291,7 +291,7 @@ int main(int argc, char *argv[]) {
         if(current_rss > max_mem_used){
             max_mem_used = current_rss;
         }
-        if(usage.ru_maxrss > max_mem_used){ // Keep the wait4 check as a fallback/redundancy
+        if(usage.ru_maxrss > max_mem_used){ //just in case. usage = max kb
             max_mem_used = usage.ru_maxrss;
         }
 
@@ -328,7 +328,9 @@ int main(int argc, char *argv[]) {
     }
 
 
-    printf("\n--- Execution Finished ---\n");
+    printf("\n Execution Finished \n");
+    printf("\n");
+    printf("\n");
     printf("Summary statistics:\n");
     printf("Max memory (Peak RSS): %ld KB\n", max_mem_used);
     // printf("User time: %ld sec\n", usage.ru_utime.tv_sec);
