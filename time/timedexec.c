@@ -167,6 +167,13 @@ int main(int argc, char *argv[]) {
                 exit(1);
             }
         }
+
+        else if(strcmp(argv[i], "-help") == 0){
+            printf("\n");
+            printf("-cl <int>  To restrict wall clock time \n");
+            printf("-mem <int>(kb)  To restrcit memory usage\n");
+            exit(1);
+        }
         //reset
         else {
             cmd_child = &argv[i];
@@ -188,13 +195,13 @@ int main(int argc, char *argv[]) {
       printf("Parent prcoess: user set max time to %d\n", max_clock);
       }
     else{
-      printf("Next time, you can use the -cl [value] flag to set cpu time limit");
+      printf("Next time, you can use the -cl [value] flag to set cpu time limit\n");
     }
     if(max_mem > 0){
         printf("Parent process: memory limit set to %ld KB\n", max_mem);
     }
     else{
-      printf("Next time you can set memory limit with flag -mem [value]");
+      printf("Next time you can set memory limit with flag -mem [value]\n");
       }
   
     printf("\n");
