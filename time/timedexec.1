@@ -1,0 +1,44 @@
+.TH TIMEDEXEC 1 "November 2025" "TimedExec Group 4 OS" "User Commands"
+.SH NAME
+timedexec \- execute a program in child process, terminates if exceeds user defned resource limit. while monitoring clock time and mem usage. 
+.SH SYNOPSIS
+.B timedexec
+[-cl <clock time(s)>] [-mem <mem usage>] command [args...]
+.SH DESCRIPTION
+This program allows a user to specify limits for program resources. The child process then executed
+the program  right after the flags mentioned. If the program exceeds the limitations placed 
+on the user which is mem and wall clock time, then the program immediately terminates. 
+Program monitors resource usage as well. Signals important for terminating
+.B timedexec
+[-cl <clock time(s)] if using this flag, specify wall clock time limit. which is time from start of main program
+to end
+.B timedexec
+[-mem <mem usage limit(KB)] if using this flag, specificy memory limit. Keep in mind you can use both flags 
+
+Signal handlers
+- Ctrl+C (SIGINT) terminates the program.
+- Ctrl+Z (SIGTSTP) pauses monitoring; resume with 'fg' (SIGCONT).
+- fg resumes monitoring.
+
+.SH OPTIONS
+.TP
+.B -cl <seconds>
+Restrict wall clock time.
+.TP
+.B -mem <kilobytes>
+Restrict memory usage.
+.TP
+.B -help
+Show usage information.
+
+.SH EXAMPLES
+Run a program with a 5-second limit:
+.IP
+timedexec -cl 5 ./myprogram
+.PP
+Run a program with a 100 MB memory limit:
+.IP
+timedexec -mem 102400 ./myprog
+
+.SH AUTHOR
+Mohamed Kamagate

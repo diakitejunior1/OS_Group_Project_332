@@ -289,7 +289,7 @@ int main(int argc, char *argv[]) {
             // crtl+z
             // pause
             pause(); // Wait for SIGCONT or SIGINT
-            continue; // Resume monitoring loop after pause() returns (likely due to SIGCONT)
+            continue; // resume monitoring loop after pause() returns (likely due to SIGCONT)
         }
 
         long current_rss = get_current_rss_kb(pid);
@@ -334,9 +334,9 @@ int main(int argc, char *argv[]) {
         usleep(100000); // Sleep 0.1s
     }
 
-    // Capture the end time immediately after the monitoring loop
+    // capture the end time immediately after the monitoring loop
     time_t end_time = time(NULL);
-    // Calculate the total wall time (real elapsed time)
+    // calculate the total wall time
     long wall_time_sec = (long)difftime(end_time, start_time);
 
 
@@ -344,7 +344,7 @@ int main(int argc, char *argv[]) {
     printf("\n");
     printf("\n");
     printf("Summary statistics:\n");
-    // Print the new wall time statistic
+
     printf("Total wall time: %ld sec\n", wall_time_sec);
     printf("Max memory (Peak RSS): %ld KB\n", max_mem_used);
     // printf("User time: %ld sec\n", usage.ru_utime.tv_sec);
