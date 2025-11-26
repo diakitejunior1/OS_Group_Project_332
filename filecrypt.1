@@ -1,0 +1,49 @@
+.TH FILECRYPT 1 "filecrypt manual"
+.SH NAME
+filecrypt \- multithreaded file encryption and decryption tool
+.SH SYNOPSIS
+.B filecrypt
+[\-e | \-d] \-i INPUT \-o OUTPUT [\-t THREADS]
+.SH DESCRIPTION
+filecrypt is a simple command-line program that encrypts or decrypts files
+using a Caesar-style byte shift. The program divides the input file into
+chunks and processes them in parallel using POSIX threads.
+
+A key is required for both encryption and decryption. The key is entered
+securely with terminal echo disabled.
+
+.SH OPTIONS
+.TP
+.B \-e, \-\-encrypt
+Encrypt the input file.
+.TP
+.B \-d, \-\-decrypt
+Decrypt the input file.
+.TP
+.B \-i, \-\-input
+Specify the input file.
+.TP
+.B \-o, \-\-output
+Specify the output file.
+.TP
+.B \-t, \-\-threads
+Number of threads to use (default: 4, max: 32).
+.TP
+.B \-h, \-\-help
+Show help message.
+
+.SH EXAMPLES
+Encrypt a file:
+.PP
+.B filecrypt \-\-encrypt \-i sample.txt \-o encrypted.bin \-t 4
+.PP
+Decrypt a file:
+.PP
+.B filecrypt \-\-decrypt \-i encrypted.bin \-o decrypted.txt
+
+.SH NOTES
+The cipher used is not cryptographically secure and should not be used for
+sensitive data.
+
+.SH AUTHOR
+Written by Aboubakar S Diakite
