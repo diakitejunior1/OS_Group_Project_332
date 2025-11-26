@@ -1,7 +1,8 @@
 #!/bin/bash
 
-echo "Test Cases for filediffadvanced"
+mode=$1  # text / binary / error / all
 
+echo "Test Cases for filediffadvanced"
 mkdir -p tests
 
 # Create minimal test files
@@ -18,15 +19,41 @@ run_test() {
     eval $2
 }
 
-# Text tests
-run_test "Same text file" "./filediffadvanced text tests/a1.txt tests/a1.txt"
-run_test "Different text file" "./filediffadvanced text tests/a1.txt tests/a2.txt"
+# 1. TEXT MODE
+run_text_tests() {
+    echo ""
+    echo "===== TEXT MODE TESTS ====="
+    run_test "Same text file" "./filediffadvanced text tests/a1.txt tests/a1.txt"
+    run_test "Different text file" "./filediffadvanced text tests/a1.txt tests/a2.txt"
+}
 
-# Binary tests
-run_test "Same binary file" "./filediffadvanced binary tests/bin1 tests/bin1"
-run_test "Different binary file" "./filediffadvanced binary tests/bin1 tests/bin2"
+# 2. BINARY MODE 
+run_binary_tests() {
+    echo ""
+    echo "===== BINARY MODE TESTS ====="
+    run_test "Same binary file" "./filediffadvanced binary tests/bin1 tests/bin1"
+    run_test "Different binary file" "./filediffadvanced binary tests/bin1 tests/bin2"
+}
 
-# Error tests
-run_test "File not found" "./filediffadvanced text no_such_file tests/a1.txt"
 
-echo ""
+# 3. ERROR HANDLING 
+run_error_tests() {
+    echo ""
+    echo "===== ERROR HANDLING TESTS ====="
+    run_test "File not found" "./filediffadvanced text no_such_file tests/a1.txt"
+}
+
+# MODE CONTROL
+if [ "$mode" == "text" ]; then
+    run_text_tests
+elif [ "$mode" == "binary" ]; then
+    run_binary_tests
+elif [ "$mode" == "error" ]; then
+    run_error_tests
+else
+    run_text_tests
+    run_binary_tests
+    run_error_tests
+    echo ""
+    echo "===== ALL TESTS COMPLETE ====="
+fi

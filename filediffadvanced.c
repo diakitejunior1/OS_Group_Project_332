@@ -9,7 +9,7 @@
 #define BUF 1024
 
 
-// TEXT DIFF: line-by-line compare
+// TEXT DIFF: 
    
 void text_diff(int fd1, int fd2) {
     char buf1[BUF], buf2[BUF];
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
     char *file1 = argv[2];
     char *file2 = argv[3];
 
-    // Open files using low-level open()
+    // Open files 
     int fd1 = open(file1, O_RDONLY);
     int fd2 = open(file2, O_RDONLY);
 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Retrieve file statistics (size)
+    // Retrieve file size
     struct stat s1, s2;
     if (stat(file1, &s1) < 0 || stat(file2, &s2) < 0) {
         perror("stat"); //Error Handling for stat
