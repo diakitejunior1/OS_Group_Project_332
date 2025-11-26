@@ -49,7 +49,7 @@ int thread_count(pid_t pid){
     buff[n] = '\0';
     char *line = strstr(buff, "Threads:");
     if(!line) return -1;
-   
+    
     line += 8;
     while(*line == ' ' || *line == '\t') line++;
 
@@ -58,26 +58,26 @@ int thread_count(pid_t pid){
 
 
 //long get_current_rss_kb(pid_t pid) { // **NEW**
-//    char path[100];
-//    snprintf(path, sizeof(path), "/proc/%d/status", pid);
+//    char path[100];
+//    snprintf(path, sizeof(path), "/proc/%d/status", pid);
 
-//    FILE *file = fopen(path, "r");
-//    if (!file) {
-//        return 0;
-//    }
+//    FILE *file = fopen(path, "r");
+//    if (!file) {
+//        return 0;
+//    }
 
-//    char line[256];
-//    long rss = 0;
-//    while (fgets(line, sizeof(line), file)) {
-//        if (strncmp(line, "VmRSS:", 6) == 0) { //can also use VmSize
-//            char *p = line + 6;
-//            while (*p == ' ' || *p == '\t') p++;
-//            rss = atol(p);
-//            break;
-//        }
-//    }
-//    fclose(file);
-//    return rss;
+//    char line[256];
+//    long rss = 0;
+//    while (fgets(line, sizeof(line), file)) {
+//        if (strncmp(line, "VmRSS:", 6) == 0) { //can also use VmSize
+//            char *p = line + 6;
+//            while (*p == ' ' || *p == '\t') p++;
+//            rss = atol(p);
+//            break;
+//        }
+//    }
+//    fclose(file);
+//    return rss;
 //}
 long get_current_rss_kb(pid_t pid){
   char path[50];
@@ -113,7 +113,7 @@ long get_current_rss_kb(pid_t pid){
 int main(int argc, char *argv[]) {
     //handle signal - credit codevault
     //one command for exiting, one for pause, one for continue
-   
+    
 
     struct sigaction sa;
     memset(&sa, 0, sizeof(sa));
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
     sa.sa_flags = SA_RESTART;
     sigaction(SIGINT, &sa, NULL);
 
-    //ctrl+z  pause
+    //ctrl+z  pause
     sa.sa_handler = &handle_sigtstp;
     sa.sa_flags = SA_RESTART;
     sigaction(SIGTSTP, &sa, NULL);
@@ -133,19 +133,19 @@ int main(int argc, char *argv[]) {
     sa.sa_flags = SA_RESTART;
     sigaction(SIGCONT, &sa, NULL);
 
+    int max_clock = 0;
+    int max_cpu = 0;
+    long max_mem = 0;
 
 
-    int max_cpu = 0;      
-    int max_clock = 0;    
-    long max_mem = 0;  
     char **cmd_child = NULL;
 
 
-   
+    
 //for loop needs to skip first program cmd line (argv[0])
 //either stop before no more arguements (argc) or stops when
 //it doesnt see a flag
-//reads flag and argument   value for the flag which is +1(assuming always int value right after)
+//reads flag and argument   value for the flag which is +1(assuming always int value right after)
 //strcmp to confirm if actual arguement matches with the name of arguements
     int i;
     for (i = 1; i < argc; i++) {
@@ -170,8 +170,8 @@ int main(int argc, char *argv[]) {
 
         else if(strcmp(argv[i], "-help") == 0){
             printf("\n");
-            printf("-cl <int>  To restrict wall clock time \n");
-            printf("-mem <int>(kb)  To restrcit memory usage\n");
+            printf("-cl <int>\tTo restrict wall clock time \n");
+            printf("-mem <int>(kb)\tTo restrcit memory usage\n");
             exit(1);
         }
         //reset
@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
           struct rlimit rl;
           rl.rlim_cur = max_cpu; //override, new limit
           rl.rlim_max = max_cpu;
-         
+          
           if(setrlimit(RLIMIT_CPU, &rl) == -1){//returns 0 on success. oinforms
             printf("Error in child. Setting cpu limit failed");
             }
@@ -228,10 +228,10 @@ int main(int argc, char *argv[]) {
               printf("Child Process: cpu limit set to %d seconds.", max_cpu);
             }
         }
-       
+        
         //child process execute program from command line ***AFTER*** initial commands
         execvp(cmd_child[0], cmd_child);
-       
+        
         // If execvp returns, it failed
         perror("Error with child (execvp failed)");
         exit(127);
@@ -244,12 +244,12 @@ int main(int argc, char *argv[]) {
     //fixed
     struct rusage usage;
     memset(&usage, 0, sizeof(usage));
-   
+    
     printf("Parent process: moinotoring child with id PID: %d....\n", pid);
     int in_progress = 1;
     while (in_progress) {
         int status, ret; //lab 10 slides
-       
+        
         //cant use waitpid. waitpid only returns status and signal that terminated process
         //wait4 used directly deals with user run time and system runtime on return
         //wait 4 returns 0 if child is still in process
@@ -266,10 +266,10 @@ int main(int argc, char *argv[]) {
                 exit(1);
             }
         }
-       
+        
         if (ret > 0) { // Child finished
               
-               
+                
               //gather info before exit 
               if(usage.ru_maxrss > max_mem_used){
                 max_mem_used = usage.ru_maxrss;
@@ -312,7 +312,7 @@ int main(int argc, char *argv[]) {
             //break;
             in_progress = 0;
         }
-       
+        
         // mem limit check
         if(max_mem > 0 && max_mem_used > max_mem)
         {
@@ -321,7 +321,7 @@ int main(int argc, char *argv[]) {
           //break;
           in_progress = 0;
         }
-       
+        
         // wall clock time limit reached
         if (max_clock && (time(NULL) - start_time) > max_clock) {
             printf("Parent Process: wall clock time reached limit! terminating child.\n");
@@ -329,16 +329,23 @@ int main(int argc, char *argv[]) {
             //break;
             in_progress =0;
         }
-       
+        
         //for busy work
         usleep(100000); // Sleep 0.1s
     }
 
+    // Capture the end time immediately after the monitoring loop
+    time_t end_time = time(NULL);
+    // Calculate the total wall time (real elapsed time)
+    long wall_time_sec = (long)difftime(end_time, start_time);
 
-    printf("\n Execution Finished \n");
+
+    printf("\n -Execution Finished- \n");
     printf("\n");
     printf("\n");
     printf("Summary statistics:\n");
+    // Print the new wall time statistic
+    printf("Total wall time: %ld sec\n", wall_time_sec);
     printf("Max memory (Peak RSS): %ld KB\n", max_mem_used);
     // printf("User time: %ld sec\n", usage.ru_utime.tv_sec);
     // printf("System time: %ld sec\n", usage.ru_stime.tv_sec);
